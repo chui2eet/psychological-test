@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>性格潛力測試</title>
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --bg-color: #f9f9fb;
+        }
+        body {
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        #quiz-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        .question { font-size: 1.2rem; margin-bottom: 1.5rem; color: #2d3436; }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        button {
+            padding: 12px;
+            border: 2px solid var(--primary-color);
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+        button:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+        #result { display: none; }
+        .progress { font-size: 0.8rem; color: #888; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <div id="quiz-content">
+        <div class="progress" id="progress">問題 1 / 3</div>
+        <div class="question" id="question-text">載入中...</div>
+        <div class="options" id="options-container"></div>
+    </div>
+
+    <div id="result">
+        <h2>測試結果</h2>
+        <p id="result-text"></p>
+        <button onclick="location.reload()">重新測試</button>
+    </div>
+</div>
+
+<script>
+    const quizData = [
+        {
+            q: "在派對中，你通常會？",
+            options: [
+                { text: "主動與陌生人聊天", score: 1 },
+                { text: "待在熟人身邊或角落", score: 0 }
+            ]
+        },
+        {
+            q: "放假時，你更傾向？",
+            options: [
+                { text: "出門找朋友聚會", score: 1 },
+                { text: "獨自留在家看書或追劇", score: 0 }
+            ]
+        },
+        {
+            q: "遇到問題時，你習慣？",
+            options: [
+                { text: "找人討論，抒發想法", score: 1 },
+                { text: "先自己安靜思考解決方案", score: 0 }
+            ]
+        }
+    ];
+
+    let currentIdx = 0;
+    let totalScore = 0;
+
+    function loadQuestion() {
+        const currentQuiz = quizData[currentIdx];
+        document.getElementById('progress').innerText = `問題 ${currentIdx + 1} / ${quizData.length}`;
+        document.getElementById('question-text').innerText = currentQuiz.q;
+        const optionsDiv = document.getElementById('options-container');
+        optionsDiv.innerHTML = '';
+
+        currentQuiz.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.innerText = opt.text;
+            btn.onclick = () => selectOption(opt.score);
+            optionsDiv.appendChild(btn);
+        });
+    }
+
+    function selectOption(score) {
+        totalScore += score;
+        currentIdx++;
+        if (currentIdx < quizData.length) {
+            loadQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById('quiz-content').style.display = 'none';
+        const resultDiv = document.getElementById('result');
+        const resultText = document.getElementById('result-text');
+        resultDiv.style.display = 'block';
+
+        if (totalScore >= 2) {
+            resultText.innerText = "你是一個活潑的外向者！社交對你來說是充電。";
+        } else {
+            resultText.innerText = "你是一個深沉的內向者！你更享受安靜的私人時光。";
+        }
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
